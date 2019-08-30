@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-version="v0.4"
+version="v0.5"
 
 #export LD_LIBRARY_PATH=/hwfssz1/ST_MCHRI/CLINIC/SOFTWARES/lib:/ldfssz1/ST_HEALTH/Aging/qiyanwei/backup/sys/lib/gcc-5.2.0/lib:/ldfssz1/ST_HEALTH/Aging/qiyanwei/backup/sys/lib/gcc-5.2.0/lib64:/ldfssz1/ST_HEALTH/Aging/qiyanwei/backup/sys/lib:/opt/gridengine/lib/linux-x64::/opt/python/lib
 
@@ -10,21 +10,19 @@ fq1=`readlink -f $1`; fq2=`readlink -f $2`; pre=$3
 
 outd=`dirname $pre`
 if [ ! -d $outd ]; then mkdir -p $outd; fi
-pre=`readlink -f $pre`
 
 ### option
 bamRdf_opt=""
 bamDCS_opt=" -c -q 0 -Q 0 -t 3 -s 3 -S 3000 -f 0.001 -e 0.0001 "
 trim_opt="1-5,80-84"
-mut_opt=" -d 1 -c 0 -C 1 "
+mut_opt=" -d 2 -c 0 -C 1 "
 RAM=7g
 
 ### reference
-#ref=/hwfssz1/ST_HEALTH/Aging/F16ZQSB1SY2761/yerui/ref/rCRS.fa
+ref=/hwfssz1/ST_HEALTH/Aging/F16ZQSB1SY2761/yerui/ref/rCRS.fa
 #ref=/home2/groups/pcsham/users/yerui/ref/hg19ByChr/hg19.rCRS.fa
 #ref=/home/yerui/ref/GRCm38.75/Mus_musculus.GRCm38.75.dna.primary_assembly.fa
 #ref=/zfssz2/ST_HEALTH/HEALTH/yerui_5T/MacacaMtDNA/pipeline/LFMD/ref/macaca_fascicularis_mtdna.fa
-ref=/home/yerui/ref/mitochondria/rCRS.fa
 
 ### software
 #bin=/hwfssz1/ST_HEALTH/Aging/F16ZQSB1SY2761/yerui/project/LFMD/$version
@@ -41,30 +39,27 @@ echo `date` start low-frequency mutation detection
 
 :<<'_NOTE_'
 
-_NOTE_
-
 spacerLength=5
 tagLength=12
 
 # move tags to read ID
 python $bin/tag_to_header.py \
-    --infile1 $fq1 \
-    --infile2 $fq2 \
     --outprefix $pre \
     --tagstats \
     --spacerlen $spacerLength \
     --taglen $tagLength ; echo `date` tag to head done
 
+_NOTE_
 
-#ln -sf $fq1 $pre.seq1.smi.fq.gz
-#ln -sf $fq2 $pre.seq2.smi.fq.gz
+ln -sf $fq1 $pre.seq1.fq.gz
+ln -sf $fq2 $pre.seq2.fq.gz
 
 # alignment
-$bwa aln $ref $pre.seq1.smi.fq.gz > $pre.seq1.aln
-$bwa aln $ref $pre.seq2.smi.fq.gz > $pre.seq2.aln
+$bwa aln $ref $pre.seq1.fq.gz > $pre.seq1.aln
+$bwa aln $ref $pre.seq2.fq.gz > $pre.seq2.aln
 
 $bwa sampe -s $ref -r '@RG\tID:foo\tSM:bar' \
-    $pre.seq1.aln $pre.seq2.aln $pre.seq1.smi.fq.gz $pre.seq2.smi.fq.gz \
+    $pre.seq1.aln $pre.seq2.aln $pre.seq1.fq.gz $pre.seq2.fq.gz \
     | $samtools view -bS - > $pre.bam ; echo `date` bwa done
 
 # filt unmap & sort by position
@@ -105,9 +100,7 @@ $bin/bamDCS $bamDCS_opt $pre.family.bam $pre.dcs -o $pre.dcs.bam ; echo `date` d
 $samtools sort $pre.dcs.bam -o $pre.dcs.sort.bam
 $samtools index $pre.dcs.sort.bam
 
-:<<'TMP'
-
-TMP
+:<<TMP
 # identify the genome targets for local re-alignment
 java -Xmx$RAM -jar $gatk \
     -T RealignerTargetCreator \
@@ -126,11 +119,12 @@ java -Xmx$RAM -jar $gatk \
     -targetIntervals $pre.dcs.sort.intervals \
     -o $pre.dcs.sort.realign.bam ; echo `date` dcs re-align done
 
+TMP
 # Perform end-trimming of DCS reads
 java -Xmx3g -jar $gatk \
     -T ClipReads \
     -R $ref \
-    -I $pre.dcs.sort.realign.bam \
+    -I $pre.dcs.sort.bam \
     -o $pre.dcs.final.bam \
     --cyclesToTrim $trim_opt \
     --clipRepresentation SOFTCLIP_BASES ; echo `date` dcs trim done
