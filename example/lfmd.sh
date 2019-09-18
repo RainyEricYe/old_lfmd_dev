@@ -13,6 +13,9 @@ if [ ! -d $outd ]; then mkdir -p $outd; fi
 bamRdf_opt=""
 bamDCS_opt=" -c -q 0 -Q 0 -t 3 -s 3 -S 3000 -f 0.001 -e 0.0001 "
 RAM=7g
+mut_opt=" -d 2 -c 0 -C 1 "
+spacerLength=5
+tagLength=12
 
 ### reference
 ref=/home/yerui/ref/GRCm38.75/Mus_musculus.GRCm38.75.dna.primary_assembly.fa
@@ -31,13 +34,17 @@ echo `date` start low-frequency mutation detection
 _NOTE_
 
 ### move tags to read ID
-spacerLength=5
-tagLength=12
+# this step can be skiped if there is no molecular tag in the raw fq files
 python $bin/tag_to_header.py --infile1 $fq1 --infile2 $fq2 \
     --outprefix $pre \
     --tagstats \
     --spacerlen $spacerLength \
     --taglen $tagLength ; echo `date` tag to head done
+
+### link input fq
+# use the following lines if there is no molecular tag in the raw fq files
+# ln -sf $fq1 $pre.seq1.smi.fq.gz
+# ln -sf $fq2 $pre.seq2.smi.fq.gz
 
 ### alignment
 $bwa aln $ref $pre.seq1.smi.fq.gz > $pre.seq1.aln
@@ -91,5 +98,12 @@ $samtools mpileup -B -A -d 5000000 -f $ref $pre.dcs.sort.bam > $pre.dcs.pileup ;
 ### Call muations
 $bin/lhmut -s 1 -f 0.00001 -e 1e-7 -i $pre.dcs.pileup -o $pre.lh.mut ; echo `date` lhmut done
 $bin/adjust_p2.pl $pre.lh.mut -f 1e-5 | grep -v F > $pre.lh.mut.adj
+
+### Alternative caller from Duplex Sequencing which can be used when -s 3 for bamDCS
+# Count the number of unique mutations present in the final DCS sequences and calculate their frequencies
+python $bin/CountMuts.py $mut_opt -i $pre.dcs.pileup -o $pre.dcs.countmuts ; echo `date` count mut done
+
+# Locate the genomic position of each mutation
+python $bin/mut-position.py $mut_opt -i $pre.dcs.pileup -o $pre.dcs.mutpos ; echo `date` locate mut done
 
 echo `date` job-done
