@@ -79,7 +79,7 @@ $samtools view -b -q 30 $pre.sort.realign.bam \
 ### cluster family
 $bin/bamRdf $bamRdf_opt -i $pre.sort.realign.mapQ30.sortByName.bam -o $pre.family.bam ; echo `date` cluster family done
 
-### generate Doubel-strand Consensus Sequence (DCS)
+### generate Double-strand Consensus Sequence (DCS)
 $bin/bamDCS $bamDCS_opt $pre.family.bam $pre.dcs -o $pre.dcs.bam ; echo `date` dcs done
 
 $samtools sort $pre.dcs.bam -o $pre.dcs.sort.bam
