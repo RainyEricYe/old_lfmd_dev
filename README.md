@@ -17,8 +17,7 @@ Low Frequency Mutation Detector
   yerui@connect.hku.hk
   
 # Citation
-Rui Ye et al. LFMD: detecting low-frequency mutations in genome sequencing data without molecular tags.
-  https://www.biorxiv.org/content/10.1101/617381v9
+Rui Ye et al. LFMD: detecting low-frequency mutations in genome sequencing data without molecular tags. https://www.biorxiv.org/content/10.1101/617381v11
   
 # Usage
     vi lfmd2.sh && ajust parameters and file paths
