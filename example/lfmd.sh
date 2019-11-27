@@ -22,8 +22,6 @@ ref=/home/yerui/ref/GRCm38.75/Mus_musculus.GRCm38.75.dna.primary_assembly.fa
 
 ### software
 bin=..
-samtools=$bin/samtools
-bwa=$bin/bwa
 gatk=/psychipc01/disk2/software/GATK/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar #hk
 
 # start
@@ -47,16 +45,16 @@ python $bin/tag_to_header.py --infile1 $fq1 --infile2 $fq2 \
 # ln -sf $fq2 $pre.seq2.smi.fq.gz
 
 ### alignment
-$bwa aln $ref $pre.seq1.smi.fq.gz > $pre.seq1.aln
-$bwa aln $ref $pre.seq2.smi.fq.gz > $pre.seq2.aln
+bwa aln $ref $pre.seq1.smi.fq.gz > $pre.seq1.aln
+bwa aln $ref $pre.seq2.smi.fq.gz > $pre.seq2.aln
 
-$bwa sampe -s $ref -r '@RG\tID:foo\tSM:bar' \
+bwa sampe -s $ref -r '@RG\tID:foo\tSM:bar' \
     $pre.seq1.aln $pre.seq2.aln $pre.seq1.smi.fq.gz $pre.seq2.smi.fq.gz \
-    | $samtools view -bS - > $pre.bam ; echo `date` bwa done
+    | samtools view -bS - > $pre.bam ; echo `date` bwa done
 
 # filt unmap & sort by position
-$samtools view -b -F 4 $pre.bam | $samtools sort - -o $pre.sort.bam ; echo `date` filt unmap and sort done
-$samtools index $pre.sort.bam ; echo `date` index done
+samtools view -b -F 4 $pre.bam | samtools sort - -o $pre.sort.bam ; echo `date` filt unmap and sort done
+samtools index $pre.sort.bam ; echo `date` index done
 
 # identify the genome targets for local re-alignment
 java -Xmx$RAM -jar $gatk \
@@ -77,11 +75,11 @@ java -Xmx$RAM -jar $gatk \
     -o $pre.sort.realign.bam ; echo `date` re-align done
 
 # filt for duplex
-# $samtools view -b -q 30 $pre.sort.realign.bam > $pre.sort.realign.mapQ30.bam ; echo `date` sort done
+# samtools view -b -q 30 $pre.sort.realign.bam > $pre.sort.realign.mapQ30.bam ; echo `date` sort done
 
 # filt mapQ
-$samtools view -b -q 30 $pre.sort.realign.bam \
-    | $samtools sort -n - -o $pre.sort.realign.mapQ30.sortByName.bam ; echo `date` sort by name done
+samtools view -b -q 30 $pre.sort.realign.bam \
+    | samtools sort -n - -o $pre.sort.realign.mapQ30.sortByName.bam ; echo `date` sort by name done
 
 ### cluster family
 $bin/bamRdf $bamRdf_opt -i $pre.sort.realign.mapQ30.sortByName.bam -o $pre.family.bam ; echo `date` cluster family done
@@ -89,11 +87,11 @@ $bin/bamRdf $bamRdf_opt -i $pre.sort.realign.mapQ30.sortByName.bam -o $pre.famil
 ### generate Double-strand Consensus Sequence (DCS)
 $bin/bamDCS $bamDCS_opt $pre.family.bam $pre.dcs -o $pre.dcs.bam ; echo `date` dcs done
 
-$samtools sort $pre.dcs.bam -o $pre.dcs.sort.bam
-$samtools index $pre.dcs.sort.bam
+samtools sort $pre.dcs.bam -o $pre.dcs.sort.bam
+samtools index $pre.dcs.sort.bam
 
 # Make a pileup file from the final DCS reads using
-$samtools mpileup -B -A -d 5000000 -f $ref $pre.dcs.sort.bam > $pre.dcs.pileup ; echo `date` pileup done
+samtools mpileup -B -A -d 5000000 -f $ref $pre.dcs.sort.bam > $pre.dcs.pileup ; echo `date` pileup done
 
 ### Call muations
 $bin/lhmut -s 1 -f 0.00001 -e 1e-7 -i $pre.dcs.pileup -o $pre.lh.mut ; echo `date` lhmut done

@@ -122,6 +122,9 @@ def hdr_rename_fxn(read_title, read1_tag, read2_tag):
 		#e.g. @HWUSI-EAS100R:6:73:941:1973#ATCGAT/1
 		read_title = read_title.replace(' ', '_')
 		return "%s|%s%s/%s" % (read_title.split('/')[0], read1_tag, read2_tag, read_title.split('/')[1])
+	elif len(illumina) == 1:
+		# e.g. @chr1-0-1
+		return "%s|%s%s" % ( read_title.split('/')[0], read1_tag, read2_tag )
 	else :
 		raise ValueError("Unknown read name format: %s" % read_title)
 
@@ -147,10 +150,12 @@ def tag_stats(barcode_counts, outfile):
 def open_fastq(infile, outfile):
     if infile.endswith(".gz"):
         in_fh = gzip.open(infile, 'rb')
-        out_fh = gzip.open(outfile + ".gz", 'wb')
+#        out_fh = gzip.open(outfile + ".gz", 'wb')
     else:
         in_fh = open(infile, 'r')
-        out_fh = open(outfile, 'w')
+#        out_fh = open(outfile, 'w')
+
+    out_fh = gzip.open(outfile + ".gz", 'wb')
     return (in_fh, out_fh)
 
 def main():
