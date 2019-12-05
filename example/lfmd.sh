@@ -13,7 +13,7 @@ if [ ! -d $outd ]; then mkdir -p $outd; fi
 bamRdf_opt=""
 bamDCS_opt=" -c -q 0 -Q 0 -t 3 -s 3 -S 3000 -f 0.001 -e 0.0001 "
 RAM=7g
-mut_opt=" -d 2 -c 0 -C 1 "
+mut_opt=" -d 1 -c 0 -C 1 "
 spacerLength=5
 tagLength=12
 
