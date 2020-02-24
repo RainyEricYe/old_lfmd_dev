@@ -15,20 +15,20 @@ runit python $sim --frag-file $outpre.fragFile.fq \
     -1 $outpre\_1.fq \
     -2 $outpre\_2.fq \
     -o fastq \
-    -m $outpre.mutations \
-    -b $outpre.barcodes \
     -Q 5 \
     -n $copy \
     -r 100 \
     -s 0.01 \
     -p 0.00001 \
-    -c 25 \
+    -c 20 \
     -B 12 \
     -I TGACT \
     -l $outpre.log \
-    -v
+    -q
 
 rm -rf $outpre.fragFile.fq
 
-echo job-done
+#    -m $outpre.mutations \
+#    -b $outpre.barcodes \
 
+echo job-done

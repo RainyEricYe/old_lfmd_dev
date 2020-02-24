@@ -6,7 +6,7 @@ use Cwd qw/abs_path/;
 use File::Basename;
 
 my ( $Help, $debug, $snvNum, $insNum, $delNum, $insMaxLen, $delMaxLen, $Seed, )
- = ( 0,     0,      200,     100,     100,     6,          5,        , 0,     );
+ = ( 0,     0,      100,     20,      20,      5,          4,          0,     );
 GetOptions(
     'help|?' => \$Help,
     'debug'  => \$debug,
@@ -144,7 +144,7 @@ for ( my $j = 0; $j <= $#seq; $j += 50 ) {
     print $OUT (join "", @seq[$j..$e])."\n";
 }
 close $OUT;
-
+`samtools faidx $nref`;
 
 &showLog("END");
 

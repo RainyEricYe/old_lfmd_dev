@@ -325,8 +325,6 @@ def generate_mutations(seq_len, error_rate, indel_rate, extension_rate):
   while i <= seq_len:
     if i < 5 or i > seq_len - 5:
       new_error_rate = error_rate * 5
-      if new_error_rate < 0.001:
-          new_error_rate = 0.001
     else:
       new_error_rate = error_rate
 

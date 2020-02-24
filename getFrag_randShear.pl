@@ -22,6 +22,10 @@ my ($ref, $pre) = @ARGV;
 
 &showLog("START");
 
+if ( !-f "$ref.fai" ) {
+    `samtools faidx $ref`;
+}
+
 open my $IN, "<$ref.fai" or die $!;
 my ($chr, $length) = split /\s+/, <$IN>;
 close $IN;
