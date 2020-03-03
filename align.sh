@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 version="dev"
 gatk=/psychipc01/disk2/software/GATK/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar # hk
 
@@ -17,8 +17,11 @@ fi
 outd=`dirname $pre`
 if [ ! -d $outd ]; then mkdir -p $outd; fi
 
-bwa aln $ref $fq1 > $pre.r1.aln
-bwa aln $ref $fq2 > $pre.r2.aln
+# found aln option -I
+aln_opt=`gzip -cd $fq1 | perl -lne 'if ($.%4 == 0 && m/[K-Za-h]/) {print " -I "; last} last if $. > 100 '`
+
+bwa aln $aln_opt $ref $fq1 > $pre.r1.aln
+bwa aln $aln_opt $ref $fq2 > $pre.r2.aln
 
 bwa sampe -s $ref -r '@RG\tID:foo\tSM:bar' $pre.r1.aln $pre.r2.aln $fq1 $fq2 \
     | samtools view -bS - > $pre.bam ; echo `date` bwa done
