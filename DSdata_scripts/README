@@ -1,0 +1,20 @@
+D-High_Hippocampus:
+523E  533E  552E  652E  670E
+
+D-High_Parietal:
+523B  533B  552B  652B  670B
+
+ND-High_Hippocampus:
+2384H  3080H  547H  558H  626H
+
+ND-High_Parietal:
+2384P  3080P  547P  558P  626P
+
+ND-Low_Hippocampus:
+1440E  334E  409E  506H  511H
+
+ND-Low_Parietal:
+1440B  334B  409B
+
+ND-High_Hippocampus/558H  156bp  fastq in raw --> need gzip --> rename  115bp read
+ND-Low_Hippocampus/506H pe.sort.bam is the raw downloaded data  --> 506.reform.sh
