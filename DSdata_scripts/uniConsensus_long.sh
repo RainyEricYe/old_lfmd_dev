@@ -23,11 +23,11 @@ bin=/home/yerui/project/LFMD/bin
 RAM=9G
 mut_opt=" -d 1 -c 0 -C 1 "
 #cyclesToTrim="1-5,80-84"
-cyclesToTrim="1-5,111-115"
+cyclesToTrim="1-5,135-139"
 
 :<<'_NOTE_'
-_NOTE_
 
+_NOTE_
 # fastq to unaligned bam
 java  -Xmx7g -jar $picard FastqToSam \
     F1=$fq1 \
