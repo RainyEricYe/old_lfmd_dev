@@ -44,7 +44,7 @@ $bin/bamRdf $bamRdf_opt -i $pre.sort.realign.mapQ30.sortByName.bam -o $pre.famil
 rm -f $pre.sort.realign.mapQ30.sortByName.bam
 
 ### generate Double-strand Consensus Sequence (DCS)
-/home/yerui/project/bamDCS/v2.4r/bamDCS $bamDCS_opt $pre.family.bam $pre.dcs -o $pre.dcs.bam ; echo `date` dcs done
+$bin/bamDCS $bamDCS_opt $pre.family.bam $pre.dcs -o $pre.dcs.bam ; echo `date` dcs done
 
 rm -f $pre.family.bam* $pre.dcs.*.fq.gz
 

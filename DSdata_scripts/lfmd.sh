@@ -42,23 +42,23 @@ $samtools view -b -q 30 $inbam \
 ### cluster family
 $bin/bamRdf $bamRdf_opt -i $pre.sort.realign.mapQ30.sortByName.bam -o $pre.family.bam ; echo `date` cluster family done
 
-#rm -f $pre.sort.realign.mapQ30.sortByName.bam
+rm -f $pre.sort.realign.mapQ30.sortByName.bam
 
 ### generate Double-strand Consensus Sequence (DCS)
 $bin/bamDCS $bamDCS_opt $pre.family.bam $pre.dcs -o $pre.dcs.bam ; echo `date` dcs done
 
-#rm -f $pre.family.bam* $pre.dcs.*.fq.gz
+rm -f $pre.family.bam* $pre.dcs.*.fq.gz
 
 $samtools sort $pre.dcs.bam -o $pre.dcs.sort.bam
 $samtools index $pre.dcs.sort.bam
 
-#rm -f $pre.dcs.bam
+rm -f $pre.dcs.bam
 
 # Make a pileup file from the final DCS reads using
 $samtools mpileup -B -A -d 5000000 \
     -f $ref $pre.dcs.sort.bam > $pre.dcs.pileup ; echo `date` pileup done
 
-#rm -f $pre.dcs.sort.ba*
+rm -f $pre.dcs.sort.ba*
 
 # Count the number of unique mutations present in the final DCS sequences and calculate their frequencies
 python $bin/CountMuts.py $mut_opt -i $pre.dcs.pileup -o $pre.dcs.countmuts ; echo `date` count mut done
@@ -70,6 +70,6 @@ python $bin/mut-position.py $mut_opt -i $pre.dcs.pileup -o $pre.dcs.mutpos ; ech
 $bin/lhmut -s 1 -f 0.00001 -e 1e-7 -i $pre.dcs.pileup -o $pre.lh.mut ; echo `date` lhmut done
 $bin/adjust_p2.pl $pre.lh.mut -f 1e-5 | grep -v F > $pre.lh.mut.adj
 
-#rm -f $pre.dcs.pileup
+rm -f $pre.dcs.pileup
 
 echo `date` job-done
