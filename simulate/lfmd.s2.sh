@@ -11,16 +11,15 @@ if [ ! -d $outd ]; then mkdir -p $outd; fi
 
 ### option
 bamRdf_opt=""
-bamDCS_opt=" -c -q 0 -Q 0 -t 3 -s 3 -S 3000 -f 0.001 -e 0.0001 "
-RAM=9G
+bamDCS_opt=" -c -q 0 -Q 0 -t 2 -s 2 -S 3000 -f 0.001 -e 0.0001 "
+RAM=7g
 mut_opt=" -d 1 -c 0 -C 1 "
 spacerLength=5
 tagLength=12
 
 ### reference
 #ref=/home/yerui/ref/GRCm38.75/Mus_musculus.GRCm38.75.dna.primary_assembly.fa
-#ref=/home/yerui/ref/mitochondria/rCRS.fa
-ref=/home2/groups/pcsham/users/yerui/ref/hg19ByChr/hg19.rCRS.fa
+ref=/home/yerui/ref/mitochondria/rCRS.fa
 
 ### software
 bin=/home/yerui/project/LFMD/$version
@@ -58,7 +57,7 @@ rm -f $pre.dcs.bam
 $samtools mpileup -B -A -d 5000000 \
     -f $ref $pre.dcs.sort.bam > $pre.dcs.pileup ; echo `date` pileup done
 
-#rm -f $pre.dcs.sort.ba*
+rm -f $pre.dcs.sort.ba*
 
 # Count the number of unique mutations present in the final DCS sequences and calculate their frequencies
 python $bin/CountMuts.py $mut_opt -i $pre.dcs.pileup -o $pre.dcs.countmuts ; echo `date` count mut done

@@ -57,7 +57,7 @@ rm -f $pre.dcs.bam
 $samtools mpileup -B -A -d 5000000 \
     -f $ref $pre.dcs.sort.bam > $pre.dcs.pileup ; echo `date` pileup done
 
-rm -f $pre.dcs.sort.ba*
+#rm -f $pre.dcs.sort.ba*
 
 # Count the number of unique mutations present in the final DCS sequences and calculate their frequencies
 python $bin/CountMuts.py $mut_opt -i $pre.dcs.pileup -o $pre.dcs.countmuts ; echo `date` count mut done
