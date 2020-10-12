@@ -46,7 +46,7 @@ rm -f $pre.sort.realign.mapQ30.sortByName.bam
 ### generate Double-strand Consensus Sequence (DCS)
 $bin/bamDCS $bamDCS_opt $pre.family.bam $pre.dcs -o $pre.dcs.bam ; echo `date` dcs done
 
-rm -f $pre.family.bam* $pre.dcs.*.fq.gz
+#rm -f $pre.family.bam* $pre.dcs.*.fq.gz
 
 $samtools sort $pre.dcs.bam -o $pre.dcs.sort.bam
 $samtools index $pre.dcs.sort.bam
