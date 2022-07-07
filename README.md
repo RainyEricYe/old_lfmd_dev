@@ -11,7 +11,7 @@ Low Frequency Mutation Detector
 - lhmut(https://github.com/RainyEricYe/lhmut)
 
 # Install
-    wget https://github.com/RainyEricYe/LFMD.git
+    git clone https://github.com/RainyEricYe/LFMD.git
 
 # Contact
   yerui@connect.hku.hk
